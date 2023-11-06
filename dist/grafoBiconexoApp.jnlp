@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="grafoBiconexoApp.jnlp">
+  <information>
+    <title>grafoBiconexoApp</title>
+    <vendor>aliso</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="grafoBiconexoApp.jar" size="27830" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="grafoBiconexoApp" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="javafxapplication2.GrafoBiconexoApp"  name="grafoBiconexoApp" >
+    <fx:param name="args" value="C:\Projetos\JAVA\Grafo1.txt"/>
+  </jfx:javafx-desc>
+  <update check="always"/>
+</jnlp>

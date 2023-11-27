@@ -19,47 +19,57 @@ public class AlgoritmoBiconexo {
     private int cont;
     private boolean[] articulacao;
 
-    public AlgoritmoBiconexo(Grafo G) {
-        low = new int[G.V()];
-        pre = new int[G.V()];
-        articulacao = new boolean[G.V()];
-        for (int v = 0; v < G.V(); v++)
+    // Construtor da classe AlgoritmoBiconexo. 
+// Inicializa as estruturas de dados e executa o algoritmo para encontrar pontos de articulação em um grafo G.
+public AlgoritmoBiconexo(Grafo G) {
+    low = new int[G.V()]; // 'low': armazena o menor índice de DFS alcançável de cada vértice.
+    pre = new int[G.V()]; // 'pre': armazena a ordem em que os vértices são visitados no DFS.
+    articulacao = new boolean[G.V()]; // 'articulacao': indica se um vértice é um ponto de articulação.
+    
+    // Inicializa os arrays 'low' e 'pre' com -1 para todos os vértices indicando que nenhum vértice foi visitado.
+     for (int v = 0; v < G.V(); v++)
             low[v] = -1;
-        for (int v = 0; v < G.V(); v++)
+     for (int v = 0; v < G.V(); v++)
             pre[v] = -1;
+    
+    // Inicia uma DFS para cada vértice não visitado para encontrar pontos de articulação.
+    for (int v = 0; v < G.V(); v++)
+        if (pre[v] == -1) // Se o vértice ainda não foi visitado, inicia a DFS neste vértice.
+            dfs(G, v, v);
+}
+
+// Método DFS privado que realiza a busca em profundidade para encontrar pontos de articulação.
+private void dfs(Grafo G, int u, int v) {
+    int filhos = 0; // Contador para o número de subárvores na DFS.
+    pre[v] = cont++; // Define a ordem de pré-visita de 'v' e incrementa o contador global 'cont'.
+    low[v] = pre[v]; // Inicialmente, define 'low[v]' como 'pre[v]'.
+    
+    // Explora todas as arestas adjacentes ao vértice 'v'.
+    for (Aresta a : G.adj(v)) {
+        int w = a.getV2(); // 'w' é o vértice na extremidade oposta da aresta 'a'.
         
-        for (int v = 0; v < G.V(); v++)
-            if (pre[v] == -1)
-                dfs(G, v, v);
-    }
+        // Se 'w' ainda não foi visitado, executa DFS recursivamente em 'w'.
+        if (pre[w] == -1) {
+            filhos++; // Incrementa o contador de filhos para a raiz da DFS.
+            dfs(G, v, w); // Chamada recursiva para a DFS.
 
-    private void dfs(Grafo G, int u, int v) {
-        int filhos = 0;
-        pre[v] = cont++;
-        low[v] = pre[v];
-        for (Aresta a : G.adj(v)) {
-            int w = a.getV2();
-            if (pre[w] == -1) {
-                filhos++;
-                dfs(G, v, w);
+            // Atualiza o 'low[v]' com o menor valor entre o atual 'low[v]' e 'low[w]'.
+            low[v] = Math.min(low[v], low[w]);
 
-                // atualiza números low (baixo)
-                low[v] = Math.min(low[v], low[w]);
-
-                // não-raíz de DFS é um ponto de articulação if low[w] >= pre[v]
-                if (low[w] >= pre[v] && u != v) 
-                    articulacao[v] = true;
-            }
-
-            // atualiza número low - ignora o reverso da aresta que leva a v
-            else if (w != u)
-                low[v] = Math.min(low[v], pre[w]);
+            // Se 'v' não é a raiz da DFS e 'low[w]' é maior ou igual a 'pre[v]',
+            // então 'v' é um ponto de articulação.
+            if (low[w] >= pre[v] && u != v) 
+                articulacao[v] = true;
         }
-
-        // raíz de DFS é um ponto de articulação se este tem mais do que 1 filho
-        if (u == v && filhos > 1)
-            articulacao[v] = true;
+        // Se 'w' é diferente de 'u' (não é a aresta de retorno), atualiza 'low[v]'.
+        else if (w != u)
+            low[v] = Math.min(low[v], pre[w]);
     }
+
+    // Se 'v' é a raiz da DFS e tem mais de um filho, então 'v' é um ponto de articulação.
+    if (u == v && filhos > 1)
+        articulacao[v] = true;
+}
 
     // o vértice v é um ponto de articulação?
     public boolean ehArticulacao(int v) { return articulacao[v]; }
